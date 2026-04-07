@@ -1,0 +1,83 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-native-packages:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            platform: darwin-arm64
+            target: aarch64-apple-darwin
+            package: clawkeys-darwin-arm64
+          - os: macos-13
+            platform: darwin-x64
+            target: x86_64-apple-darwin
+            package: clawkeys-darwin-x64
+          - os: ubuntu-24.04
+            platform: linux-x64-gnu
+            target: x86_64-unknown-linux-gnu
+            package: clawkeys-linux-x64-gnu
+          - os: ubuntu-24.04
+            platform: linux-x64-musl
+            target: x86_64-unknown-linux-musl
+            package: clawkeys-linux-x64-musl
+          - os: ubuntu-24.04
+            platform: linux-arm64-gnu
+            target: aarch64-unknown-linux-gnu
+            package: clawkeys-linux-arm64-gnu
+          - os: windows-latest
+            platform: win32-x64-msvc
+            target: x86_64-pc-windows-msvc
+            package: clawkeys-win32-x64-msvc
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - run: npm ci --ignore-scripts
+      - name: Build native package for platform
+        run: npm run build:napi -- --target ${{ matrix.target }}
+
+      - name: Stage platform binary for package
+        shell: bash
+        run: |
+          if [ ! -f crates/native/clawkeys.${{ matrix.platform }}.node ]; then
+            echo "Missing expected native artifact: crates/native/clawkeys.${{ matrix.platform }}.node"
+            ls -la crates/native
+            exit 1
+          fi
+          cp crates/native/clawkeys.${{ matrix.platform }}.node npm/${{ matrix.package }}/
+      - name: Publish native package
+        run: |
+          npm publish ./npm/${{ matrix.package }} --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  publish-root:
+    needs: build-native-packages
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci --ignore-scripts
+      - run: npm run build:ts
+      - run: npm run lint
+      - name: Publish root package
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

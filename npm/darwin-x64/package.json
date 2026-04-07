@@ -1,0 +1,19 @@
+{
+  "name": "clawkeys-darwin-x64",
+  "version": "0.1.0",
+  "description": "Native addon for clawkeys on darwin x64",
+  "type": "module",
+  "os": ["darwin"],
+  "cpu": ["x64"],
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "*.node"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

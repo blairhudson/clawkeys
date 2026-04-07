@@ -1,0 +1,12 @@
+[package]
+name = "clawkeys-native"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+napi = { version = "=3.8.4", features = ["napi4"] }
+napi-derive = "=3.5.3"
+rusb = "=0.9.4"
+
+[lib]
+crate-type = ["cdylib"]
