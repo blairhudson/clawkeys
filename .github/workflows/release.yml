@@ -7,6 +7,9 @@ on:
 
 jobs:
   build-native-packages:
+    permissions:
+      contents: read
+      id-token: write
     strategy:
       fail-fast: false
       matrix:
@@ -14,33 +17,34 @@ jobs:
           - os: macos-14
             platform: darwin-arm64
             target: aarch64-apple-darwin
-            package: clawkeys-darwin-arm64
+            package_dir: darwin-arm64
           - os: macos-13
             platform: darwin-x64
             target: x86_64-apple-darwin
-            package: clawkeys-darwin-x64
+            package_dir: darwin-x64
           - os: ubuntu-24.04
             platform: linux-x64-gnu
             target: x86_64-unknown-linux-gnu
-            package: clawkeys-linux-x64-gnu
+            package_dir: linux-x64-gnu
           - os: ubuntu-24.04
             platform: linux-x64-musl
             target: x86_64-unknown-linux-musl
-            package: clawkeys-linux-x64-musl
+            package_dir: linux-x64-musl
           - os: ubuntu-24.04
             platform: linux-arm64-gnu
             target: aarch64-unknown-linux-gnu
-            package: clawkeys-linux-arm64-gnu
+            package_dir: linux-arm64-gnu
           - os: windows-latest
             platform: win32-x64-msvc
             target: x86_64-pc-windows-msvc
-            package: clawkeys-win32-x64-msvc
+            package_dir: win32-x64-msvc
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          registry-url: https://registry.npmjs.org
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
@@ -56,28 +60,24 @@ jobs:
             ls -la crates/native
             exit 1
           fi
-          cp crates/native/clawkeys.${{ matrix.platform }}.node npm/${{ matrix.package }}/
+          cp crates/native/clawkeys.${{ matrix.platform }}.node npm/${{ matrix.package_dir }}/
       - name: Publish native package
-        run: |
-          npm publish ./npm/${{ matrix.package }} --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish ./npm/${{ matrix.package_dir }} --access public --provenance
 
   publish-root:
     needs: build-native-packages
     runs-on: ubuntu-24.04
     permissions:
       contents: read
-      packages: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          registry-url: https://registry.npmjs.org
       - run: npm ci --ignore-scripts
       - run: npm run build:ts
       - run: npm run lint
       - name: Publish root package
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance

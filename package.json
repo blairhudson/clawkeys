@@ -1,5 +1,5 @@
 {
-  "name": "clawkeys",
+  "name": "@clawkeys/ck",
   "version": "0.1.0",
   "description": "TypeScript OpenCode + CH57x control CLI backed by Node-API binaries",
   "type": "module",
@@ -18,7 +18,7 @@
   "scripts": {
     "build": "npm run build:ts && npm run build:napi",
     "build:ts": "tsc",
-    "build:napi": "napi build --release --platform --js-package-name clawkeys --manifest-path ./crates/native/Cargo.toml",
+    "build:napi": "napi build --release --platform --js-package-name @clawkeys/ck --manifest-path ./crates/native/Cargo.toml",
     "lint": "npm run build:ts -- --pretty false",
     "test": "npm run build:ts && node --test",
     "prepare": "npm run build"
@@ -27,12 +27,12 @@
     "node": ">=20"
   },
   "optionalDependencies": {
-    "clawkeys-darwin-arm64": "0.1.0",
-    "clawkeys-darwin-x64": "0.1.0",
-    "clawkeys-linux-x64-gnu": "0.1.0",
-    "clawkeys-linux-arm64-gnu": "0.1.0",
-    "clawkeys-linux-x64-musl": "0.1.0",
-    "clawkeys-win32-x64-msvc": "0.1.0"
+    "@clawkeys/ck-darwin-arm64": "0.1.0",
+    "@clawkeys/ck-darwin-x64": "0.1.0",
+    "@clawkeys/ck-linux-x64-gnu": "0.1.0",
+    "@clawkeys/ck-linux-arm64-gnu": "0.1.0",
+    "@clawkeys/ck-linux-x64-musl": "0.1.0",
+    "@clawkeys/ck-win32-x64-msvc": "0.1.0"
   },
   "napi": {
     "binaryName": "clawkeys"

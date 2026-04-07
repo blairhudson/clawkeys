@@ -97,7 +97,7 @@ helpers, so users do not need Rust installed just to use it.
 ## Install
 
 ```bash
-npm install -g clawkeys
+npm install -g @clawkeys/ck
 ```
 
 The command entrypoint is `ck`.
@@ -245,7 +245,7 @@ npm test
 npm run build:ts
 npm link
 ck --help
-npm unlink -g clawkeys
+npm unlink -g @clawkeys/ck
 ```
 
 Test commands:

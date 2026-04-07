@@ -1,7 +1,7 @@
 {
-  "name": "clawkeys-linux-arm64-gnu",
+  "name": "@clawkeys/ck-linux-arm64-gnu",
   "version": "0.1.0",
-  "description": "Native addon for clawkeys on linux arm64 gnu",
+  "description": "Native addon for @clawkeys/ck on linux arm64 gnu",
   "type": "module",
   "os": ["linux"],
   "cpu": ["arm64"],

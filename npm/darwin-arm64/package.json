@@ -1,7 +1,7 @@
 {
-  "name": "clawkeys-darwin-arm64",
+  "name": "@clawkeys/ck-darwin-arm64",
   "version": "0.1.0",
-  "description": "Native addon for clawkeys on darwin arm64",
+  "description": "Native addon for @clawkeys/ck on darwin arm64",
   "type": "module",
   "os": ["darwin"],
   "cpu": ["arm64"],

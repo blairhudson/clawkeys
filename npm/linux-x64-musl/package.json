@@ -1,7 +1,7 @@
 {
-  "name": "clawkeys-linux-x64-musl",
+  "name": "@clawkeys/ck-linux-x64-musl",
   "version": "0.1.0",
-  "description": "Native addon for clawkeys on linux x64 musl",
+  "description": "Native addon for @clawkeys/ck on linux x64 musl",
   "type": "module",
   "os": ["linux"],
   "cpu": ["x64"],

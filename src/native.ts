@@ -13,12 +13,12 @@ type CanonicalNativeBinding = {
 };
 
 const PLATFORM_PACKAGES: Record<string, string> = {
-  "darwin-arm64": "clawkeys-darwin-arm64",
-  "darwin-x64": "clawkeys-darwin-x64",
-  "linux-x64-gnu": "clawkeys-linux-x64-gnu",
-  "linux-arm64-gnu": "clawkeys-linux-arm64-gnu",
-  "linux-x64-musl": "clawkeys-linux-x64-musl",
-  "win32-x64-msvc": "clawkeys-win32-x64-msvc"
+  "darwin-arm64": "@clawkeys/ck-darwin-arm64",
+  "darwin-x64": "@clawkeys/ck-darwin-x64",
+  "linux-x64-gnu": "@clawkeys/ck-linux-x64-gnu",
+  "linux-arm64-gnu": "@clawkeys/ck-linux-arm64-gnu",
+  "linux-x64-musl": "@clawkeys/ck-linux-x64-musl",
+  "win32-x64-msvc": "@clawkeys/ck-win32-x64-msvc"
 };
 
 const TOOL_PATH_ENV = "CLAWKEYS_TOOL_PATH";
@@ -108,7 +108,7 @@ async function loadNativeBinding(): Promise<CanonicalNativeBinding> {
   } catch (error: unknown) {
     const message = (error as Error).message || String(error);
     if (message.includes("ERR_MODULE_NOT_FOUND")) {
-      throw new Error(`Native addon package ${packageName} is not installed. Reinstall clawkeys so optional platform package can be installed.`);
+      throw new Error(`Native addon package ${packageName} is not installed. Reinstall @clawkeys/ck so the matching optional platform package can be installed.`);
     }
     throw error;
   }

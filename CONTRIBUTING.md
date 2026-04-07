@@ -30,7 +30,7 @@ If you want to run the local CLI as `ck` while developing:
 ```bash
 npm link
 ck --help
-npm unlink -g clawkeys
+npm unlink -g @clawkeys/ck
 ```
 
 Native release builds use Rust, but the normal lint/test PR flow does not require
