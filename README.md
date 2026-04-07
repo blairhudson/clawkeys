@@ -40,6 +40,36 @@ thing feeling like a real tool instead of a one-night experiment.
 
 Configure it once, save a few profiles, spin the knob, and keep moving.
 
+## From Meme To Desk
+
+The build arc was exactly the kind of progression you want from a dumb internet
+idea.
+
+First the AliExpress packet shows up and suddenly the joke has mass. Then the tiny
+ keypad gets unboxed, the case gets opened, the stock caps come off, the
+relegendable caps go on, and the whole thing starts looking less like a novelty and
+more like something that deserves real software behind it.
+
+<table>
+  <tr>
+    <td align="center"><img src="./photos/1-aliexpress-package-arrives.jpeg" alt="AliExpress package arrives" width="100%" /><br /><sub>1. The packet arrives. The bit is now legally binding.</sub></td>
+    <td align="center"><img src="./photos/2-unboxing-our-keypad.jpeg" alt="Unboxing the keypad" width="100%" /><br /><sub>2. Fresh out of the box: tiny, suspiciously charming, full of potential.</sub></td>
+    <td align="center"><img src="./photos/3-whats-inside.jpeg" alt="Inside the keypad" width="100%" /><br /><sub>3. Inside the little macro pad. Enough room for the project to become real.</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="./photos/4-relegendable-keycaps.jpeg" alt="Relegendable keycaps" width="100%" /><br /><sub>4. Relegendable keycaps: the key part of turning the meme into an object.</sub></td>
+    <td align="center"><img src="./photos/5-out-with-the-old.jpeg" alt="Removing the old keycaps" width="100%" /><br /><sub>5. Out with the factory caps.</sub></td>
+    <td align="center"><img src="./photos/6-in-with-the-new.jpeg" alt="New keycaps installed" width="100%" /><br /><sub>6. In with the new. Now it actually looks like the thing people kept posting.</sub></td>
+  </tr>
+</table>
+
+Step 7 is still coming soon: printing the final keycap text inserts that sit under
+the relegendable covers and turn it into the finished approve-once / approve-always
+/ reject desk toy it was always trying to become.
+
+The last step was the software layer: getting the keypad mapped cleanly enough that
+it felt fun instead of fragile.
+
 ## What It Does
 
 `clawkeys` is a command-line tool for a CH57x 3-key + rotary keypad.
@@ -160,19 +190,19 @@ Notes:
 
 ## Build One
 
-This repo is the software half of the project. The hardware/build log side is meant
-to be just as much part of the fun.
+This repo is the software half of the project, but the hardware side is part of the
+story too.
 
-Planned additions for this README:
+Still to add:
 
-- parts list with final purchase links
-- AliExpress keypad source
-- relegendable keycap source
-- finished build photos
-- label/legend notes
+- parts list with purchase links
+- the exact AliExpress keypad source
+- the relegendable keycap source
+- final label/legend notes
 
-Once those are added, this will read like the full "I saw the meme and made it
-real" build log, not just the CLI docs.
+If you want to build your own version once those links are in, the goal is simple:
+get a tiny CH57x 3-key + rotary pad, swap in relegendable caps, give it a better
+personality, and let `clawkeys` handle the last mile.
 
 ## How It Behaves
 
