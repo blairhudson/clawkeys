@@ -1,6 +1,6 @@
 {
   "name": "@clawkeys/ck-win32-x64-msvc",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Native addon for @clawkeys/ck on win32 x64 msvc",
   "repository": {
     "type": "git",

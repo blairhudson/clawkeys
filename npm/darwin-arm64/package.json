@@ -1,6 +1,6 @@
 {
   "name": "@clawkeys/ck-darwin-arm64",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Native addon for @clawkeys/ck on darwin arm64",
   "repository": {
     "type": "git",

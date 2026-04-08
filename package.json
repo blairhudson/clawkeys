@@ -1,6 +1,6 @@
 {
   "name": "@clawkeys/ck",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "TypeScript OpenCode + CH57x control CLI backed by Node-API binaries",
   "repository": {
     "type": "git",
@@ -31,11 +31,11 @@
     "node": ">=20"
   },
   "optionalDependencies": {
-    "@clawkeys/ck-darwin-arm64": "0.1.1",
-    "@clawkeys/ck-darwin-x64": "0.1.1",
-    "@clawkeys/ck-linux-x64-gnu": "0.1.1",
-    "@clawkeys/ck-linux-arm64-gnu": "0.1.1",
-    "@clawkeys/ck-win32-x64-msvc": "0.1.1"
+    "@clawkeys/ck-darwin-arm64": "0.1.2",
+    "@clawkeys/ck-darwin-x64": "0.1.2",
+    "@clawkeys/ck-linux-x64-gnu": "0.1.2",
+    "@clawkeys/ck-linux-arm64-gnu": "0.1.2",
+    "@clawkeys/ck-win32-x64-msvc": "0.1.2"
   },
   "napi": {
     "binaryName": "clawkeys"
