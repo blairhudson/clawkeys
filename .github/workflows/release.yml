@@ -1,12 +1,80 @@
 name: release
 
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump type
+        required: true
+        type: choice
+        default: patch
+        options:
+          - major
+          - minor
+          - patch
 
 jobs:
+  prepare-release:
+    permissions:
+      contents: read
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.bump.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - run: npm ci --ignore-scripts
+      - run: npm run lint
+      - run: npm test
+      - name: Bump release version
+        id: bump
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm version "${{ github.event.inputs.bump }}" --no-git-tag-version
+          VERSION=$(node -p "require('./package.json').version")
+          VERSION="$VERSION" node <<'NODE'
+          const fs = require('node:fs')
+          const path = require('node:path')
+
+          const version = process.env.VERSION
+          const root = process.cwd()
+          const rootPackagePath = path.join(root, 'package.json')
+          const rootPackage = JSON.parse(fs.readFileSync(rootPackagePath, 'utf8'))
+
+          rootPackage.version = version
+          for (const dependencyName of Object.keys(rootPackage.optionalDependencies || {})) {
+            if (dependencyName.startsWith('@clawkeys/ck-')) {
+              rootPackage.optionalDependencies[dependencyName] = version
+            }
+          }
+
+          fs.writeFileSync(rootPackagePath, `${JSON.stringify(rootPackage, null, 2)}\n`)
+
+          const npmDirectory = path.join(root, 'npm')
+          for (const entry of fs.readdirSync(npmDirectory)) {
+            const packagePath = path.join(npmDirectory, entry, 'package.json')
+            const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
+            packageJson.version = version
+            fs.writeFileSync(packagePath, `${JSON.stringify(packageJson, null, 2)}\n`)
+          }
+          NODE
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-manifests
+          path: |
+            package.json
+            npm/*/package.json
+          if-no-files-found: error
+
   build-native-packages:
+    needs: prepare-release
     permissions:
       contents: read
       id-token: write
@@ -41,6 +109,10 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-manifests
+          path: .
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -113,15 +185,18 @@ jobs:
           void __clawkeys_libgcc_s_stub(void) {}
           EOF
           /tmp/zig-cc-musl -shared -o /tmp/musl-libs/libgcc_s.so /tmp/libgcc_s_stub.c
-      - run: npm ci --ignore-scripts
+      - run: npm install --ignore-scripts
       - name: Build native package for platform
+        if: matrix.platform != 'linux-x64-musl'
+        run: npm run build:napi -- --target ${{ matrix.target }}
+      - name: Build native package for musl platform
+        if: matrix.platform == 'linux-x64-musl'
         env:
           CC_x86_64_unknown_linux_musl: /tmp/zig-cc-musl
           CXX_x86_64_unknown_linux_musl: /tmp/zig-cxx-musl
           CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER: /tmp/zig-cc-musl
           RUSTFLAGS: -C panic=abort -C link-arg=-static-libgcc -Lnative=/tmp/musl-libs
         run: npm run build:napi -- --target ${{ matrix.target }}
-
       - name: Stage platform binary for package
         shell: bash
         run: |
@@ -135,19 +210,46 @@ jobs:
         run: npm publish ./npm/${{ matrix.package_dir }} --access public --provenance
 
   publish-root:
-    needs: build-native-packages
-    runs-on: ubuntu-24.04
+    needs:
+      - prepare-release
+      - build-native-packages
     permissions:
-      contents: read
+      contents: write
       id-token: write
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-manifests
+          path: .
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
-      - run: npm ci --ignore-scripts
+      - run: npm install --ignore-scripts
       - run: npm run build:ts
       - run: npm run lint
       - name: Publish root package
         run: npm publish --access public --provenance
+      - name: Commit version bump and tag release
+        env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- package.json package-lock.json npm/*/package.json; then
+            echo "No package version changes found."
+            exit 0
+          fi
+
+          git add package.json package-lock.json npm/*/package.json
+          git commit -m "chore: release v${{ needs.prepare-release.outputs.version }}"
+          git tag "v${{ needs.prepare-release.outputs.version }}"
+          git push origin "HEAD:${{ github.ref_name }}"
+          git push origin "v${{ needs.prepare-release.outputs.version }}"
