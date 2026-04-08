@@ -2,6 +2,10 @@
   "name": "@clawkeys/ck-linux-arm64-gnu",
   "version": "0.1.0",
   "description": "Native addon for @clawkeys/ck on linux arm64 gnu",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blairhudson/clawkeys"
+  },
   "type": "module",
   "os": ["linux"],
   "cpu": ["arm64"],

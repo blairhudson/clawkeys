@@ -2,6 +2,10 @@
   "name": "@clawkeys/ck",
   "version": "0.1.0",
   "description": "TypeScript OpenCode + CH57x control CLI backed by Node-API binaries",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blairhudson/clawkeys"
+  },
   "type": "module",
   "bin": {
     "ck": "./bin/ck.js"
