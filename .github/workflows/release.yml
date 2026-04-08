@@ -14,31 +14,31 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-14
+          - runner: macos-14
             platform: darwin-arm64
             target: aarch64-apple-darwin
             package_dir: darwin-arm64
-          - os: macos-13
+          - runner: macos-14
             platform: darwin-x64
             target: x86_64-apple-darwin
             package_dir: darwin-x64
-          - os: ubuntu-24.04
+          - runner: ubuntu-24.04
             platform: linux-x64-gnu
             target: x86_64-unknown-linux-gnu
             package_dir: linux-x64-gnu
-          - os: ubuntu-24.04
+          - runner: ubuntu-24.04
             platform: linux-x64-musl
             target: x86_64-unknown-linux-musl
             package_dir: linux-x64-musl
-          - os: ubuntu-24.04
+          - runner: ubuntu-24.04-arm
             platform: linux-arm64-gnu
             target: aarch64-unknown-linux-gnu
             package_dir: linux-arm64-gnu
-          - os: windows-latest
+          - runner: windows-latest
             platform: win32-x64-msvc
             target: x86_64-pc-windows-msvc
             package_dir: win32-x64-msvc
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -48,8 +48,78 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
+      - name: Install Zig
+        if: matrix.platform == 'linux-x64-musl'
+        shell: bash
+        run: |
+          curl -L "https://ziglang.org/download/0.13.0/zig-linux-x86_64-0.13.0.tar.xz" -o /tmp/zig.tar.xz
+          tar -xf /tmp/zig.tar.xz -C /tmp
+          echo "/tmp/zig-linux-x86_64-0.13.0" >> "$GITHUB_PATH"
+      - name: Create musl zig wrappers
+        if: matrix.platform == 'linux-x64-musl'
+        shell: bash
+        run: |
+          cat > /tmp/zig-cc-musl <<'EOF'
+          #!/usr/bin/env bash
+          args=()
+          skip_next=0
+          for arg in "$@"; do
+            if [ "$skip_next" = 1 ]; then
+              skip_next=0
+              continue
+            fi
+            case "$arg" in
+              --target=x86_64-unknown-linux-musl)
+                continue
+                ;;
+              --target)
+                skip_next=1
+                continue
+                ;;
+            esac
+            args+=("$arg")
+          done
+          exec zig cc -target x86_64-linux-musl -static-libgcc "${args[@]}"
+          EOF
+          cat > /tmp/zig-cxx-musl <<'EOF'
+          #!/usr/bin/env bash
+          args=()
+          skip_next=0
+          for arg in "$@"; do
+            if [ "$skip_next" = 1 ]; then
+              skip_next=0
+              continue
+            fi
+            case "$arg" in
+              --target=x86_64-unknown-linux-musl)
+                continue
+                ;;
+              --target)
+                skip_next=1
+                continue
+                ;;
+            esac
+            args+=("$arg")
+          done
+          exec zig c++ -target x86_64-linux-musl -static-libgcc "${args[@]}"
+          EOF
+          chmod +x /tmp/zig-cc-musl /tmp/zig-cxx-musl
+      - name: Create musl libgcc_s stub
+        if: matrix.platform == 'linux-x64-musl'
+        shell: bash
+        run: |
+          mkdir -p /tmp/musl-libs
+          cat > /tmp/libgcc_s_stub.c <<'EOF'
+          void __clawkeys_libgcc_s_stub(void) {}
+          EOF
+          /tmp/zig-cc-musl -shared -o /tmp/musl-libs/libgcc_s.so /tmp/libgcc_s_stub.c
       - run: npm ci --ignore-scripts
       - name: Build native package for platform
+        env:
+          CC_x86_64_unknown_linux_musl: /tmp/zig-cc-musl
+          CXX_x86_64_unknown_linux_musl: /tmp/zig-cxx-musl
+          CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER: /tmp/zig-cc-musl
+          RUSTFLAGS: -C panic=abort -C link-arg=-static-libgcc -Lnative=/tmp/musl-libs
         run: npm run build:napi -- --target ${{ matrix.target }}
 
       - name: Stage platform binary for package

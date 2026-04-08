@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./clawkeys.png" alt="clawkeys" width="560" />
+  <img src="https://raw.githubusercontent.com/blairhudson/clawkeys/main/clawkeys.png" alt="clawkeys" width="560" />
 </p>
 
 <h1 align="center">clawkeys</h1>
@@ -52,14 +52,14 @@ more like something that deserves real software behind it.
 
 <table>
   <tr>
-    <td align="center"><img src="./photos/1-aliexpress-package-arrives.jpeg" alt="AliExpress package arrives" width="100%" /><br /><sub>1. The packet arrives. The bit is now legally binding.</sub></td>
-    <td align="center"><img src="./photos/2-unboxing-our-keypad.jpeg" alt="Unboxing the keypad" width="100%" /><br /><sub>2. Fresh out of the box: tiny, suspiciously charming, full of potential.</sub></td>
-    <td align="center"><img src="./photos/3-whats-inside.jpeg" alt="Inside the keypad" width="100%" /><br /><sub>3. Inside the little macro pad. Enough room for the project to become real.</sub></td>
+    <td align="center"><img src="https://raw.githubusercontent.com/blairhudson/clawkeys/main/photos/1-aliexpress-package-arrives.jpeg" alt="AliExpress package arrives" width="100%" /><br /><sub>1. The packet arrives. The bit is now legally binding.</sub></td>
+    <td align="center"><img src="https://raw.githubusercontent.com/blairhudson/clawkeys/main/photos/2-unboxing-our-keypad.jpeg" alt="Unboxing the keypad" width="100%" /><br /><sub>2. Fresh out of the box: tiny, suspiciously charming, full of potential.</sub></td>
+    <td align="center"><img src="https://raw.githubusercontent.com/blairhudson/clawkeys/main/photos/3-whats-inside.jpeg" alt="Inside the keypad" width="100%" /><br /><sub>3. Inside the little macro pad. Enough room for the project to become real.</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="./photos/4-relegendable-keycaps.jpeg" alt="Relegendable keycaps" width="100%" /><br /><sub>4. Relegendable keycaps: the key part of turning the meme into an object.</sub></td>
-    <td align="center"><img src="./photos/5-out-with-the-old.jpeg" alt="Removing the old keycaps" width="100%" /><br /><sub>5. Out with the factory caps.</sub></td>
-    <td align="center"><img src="./photos/6-in-with-the-new.jpeg" alt="New keycaps installed" width="100%" /><br /><sub>6. In with the new. Now it actually looks like the thing people kept posting.</sub></td>
+    <td align="center"><img src="https://raw.githubusercontent.com/blairhudson/clawkeys/main/photos/4-relegendable-keycaps.jpeg" alt="Relegendable keycaps" width="100%" /><br /><sub>4. Relegendable keycaps: the key part of turning the meme into an object.</sub></td>
+    <td align="center"><img src="https://raw.githubusercontent.com/blairhudson/clawkeys/main/photos/5-out-with-the-old.jpeg" alt="Removing the old keycaps" width="100%" /><br /><sub>5. Out with the factory caps.</sub></td>
+    <td align="center"><img src="https://raw.githubusercontent.com/blairhudson/clawkeys/main/photos/6-in-with-the-new.jpeg" alt="New keycaps installed" width="100%" /><br /><sub>6. In with the new. Now it actually looks like the thing people kept posting.</sub></td>
   </tr>
 </table>
 
