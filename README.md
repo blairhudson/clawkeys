@@ -105,11 +105,12 @@ The command entrypoint is `ck`.
 Supported platforms:
 
 - macOS: `darwin-arm64`, `darwin-x64`
-- Linux: `linux-x64-gnu`, `linux-arm64-gnu`, `linux-x64-musl`
+- Linux: `linux-x64-gnu`, `linux-arm64-gnu`
 - Windows: `win32-x64-msvc`
 
-If needed, set `CLAWKEYS_TOOL_PATH` to a compatible `ch57x-keyboard-tool` binary
-while testing or signing uploads.
+`ck` bundles `ch57x-keyboard-tool` for the supported platforms above.
+If needed, set `CLAWKEYS_TOOL_PATH` to override the bundled helper with a
+compatible `ch57x-keyboard-tool` binary while testing or signing uploads.
 
 ## Quick Start
 

@@ -66,7 +66,7 @@ function formatSyncMessage(actionLabel: string, result: any) {
   }
 
   if (result.reason === "helper-missing") {
-    const hint = "Install the matching platform package (for your OS/arch) or set CLAWKEYS_TOOL_PATH to a compatible ch57x-keyboard-tool binary.";
+    const hint = "Reinstall @clawkeys/ck so the matching platform package can provide the bundled helper, or set CLAWKEYS_TOOL_PATH to override it with a compatible ch57x-keyboard-tool binary.";
     return `${actionLabel}. Native helper unavailable. ${hint}`;
   }
 

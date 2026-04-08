@@ -1,4 +1,5 @@
 import { execSync } from "node:child_process";
+import { existsSync } from "node:fs";
 
 type NativeBinding = {
   isKnownKeypadConnected?: (vendorId: number, productId: number) => boolean | Promise<boolean>;
@@ -7,9 +8,19 @@ type NativeBinding = {
   run_pad_upload?: (payload: string, toolPath?: string) => void | Promise<void>;
 };
 
+type NativeModule = NativeBinding & {
+  helperPath?: string;
+};
+
 type CanonicalNativeBinding = {
   isKnownKeypadConnected: (vendorId: number, productId: number) => boolean | Promise<boolean>;
   runPadUpload: (payload: string, toolPath?: string) => void | Promise<void>;
+};
+
+type LoadedNativeModule = {
+  binding: CanonicalNativeBinding;
+  helperPath?: string;
+  platformKey: string;
 };
 
 const PLATFORM_PACKAGES: Record<string, string> = {
@@ -17,34 +28,33 @@ const PLATFORM_PACKAGES: Record<string, string> = {
   "darwin-x64": "@clawkeys/ck-darwin-x64",
   "linux-x64-gnu": "@clawkeys/ck-linux-x64-gnu",
   "linux-arm64-gnu": "@clawkeys/ck-linux-arm64-gnu",
-  "linux-x64-musl": "@clawkeys/ck-linux-x64-musl",
   "win32-x64-msvc": "@clawkeys/ck-win32-x64-msvc"
 };
 
 const TOOL_PATH_ENV = "CLAWKEYS_TOOL_PATH";
 
-let nativeBinding: CanonicalNativeBinding | null = null;
+let loadedNativeModule: LoadedNativeModule | null = null;
 
-function getLinuxLibc(): "gnu" | "musl" {
+function isLinuxMusl(): boolean {
   const report = typeof process.report?.getReport === "function" ? process.report.getReport() : undefined;
   const header: Record<string, unknown> | undefined = (report && typeof report === "object") ? (report as any).header : undefined;
   if (header && typeof header === "object") {
     const runtime = (header as { glibcVersionRuntime?: string }).glibcVersionRuntime;
     if (runtime) {
-      return "gnu";
+      return false;
     }
   }
 
   try {
     const output = execSync("ldd --version", { encoding: "utf8" }).toLowerCase();
     if (output.includes("musl")) {
-      return "musl";
+      return true;
     }
   } catch {
     // best effort only
   }
 
-  return "gnu";
+  return false;
 }
 
 function getCurrentPlatformKey(): string | null {
@@ -58,7 +68,7 @@ function getCurrentPlatformKey(): string | null {
     return "darwin-x64";
   }
   if (platform === "linux" && arch === "x64") {
-    return `linux-x64-${getLinuxLibc()}`;
+    return isLinuxMusl() ? null : "linux-x64-gnu";
   }
   if (platform === "linux" && arch === "arm64") {
     return "linux-arm64-gnu";
@@ -68,6 +78,14 @@ function getCurrentPlatformKey(): string | null {
   }
 
   return null;
+}
+
+function getUnsupportedPlatformMessage(): string {
+  if (process.platform === "linux" && process.arch === "x64" && isLinuxMusl()) {
+    return "Unsupported platform linux/x64 musl. Bundled helper binaries are published for darwin-arm64, darwin-x64, linux-x64-gnu, linux-arm64-gnu, and win32-x64-msvc.";
+  }
+
+  return `Unsupported platform ${process.platform}/${process.arch}`;
 }
 
 function normalizeBinding(binding: NativeBinding): CanonicalNativeBinding {
@@ -87,14 +105,14 @@ function normalizeBinding(binding: NativeBinding): CanonicalNativeBinding {
   };
 }
 
-async function loadNativeBinding(): Promise<CanonicalNativeBinding> {
-  if (nativeBinding) {
-    return nativeBinding;
+async function loadNativeModule(): Promise<LoadedNativeModule> {
+  if (loadedNativeModule) {
+    return loadedNativeModule;
   }
 
   const platformKey = getCurrentPlatformKey();
   if (!platformKey) {
-    throw new Error(`Unsupported platform ${process.platform}/${process.arch}`);
+    throw new Error(getUnsupportedPlatformMessage());
   }
 
   const packageName = PLATFORM_PACKAGES[platformKey];
@@ -102,9 +120,9 @@ async function loadNativeBinding(): Promise<CanonicalNativeBinding> {
     throw new Error(`No native package configured for ${platformKey}`);
   }
 
-  let imported: Record<string, unknown>;
+  let imported: NativeModule;
   try {
-    imported = await import(packageName) as unknown as Record<string, unknown>;
+    imported = await import(packageName) as NativeModule;
   } catch (error: unknown) {
     const message = (error as Error).message || String(error);
     if (message.includes("ERR_MODULE_NOT_FOUND")) {
@@ -113,16 +131,39 @@ async function loadNativeBinding(): Promise<CanonicalNativeBinding> {
     throw error;
   }
 
-  nativeBinding = normalizeBinding(imported as NativeBinding);
-  return nativeBinding;
+  loadedNativeModule = {
+    binding: normalizeBinding(imported),
+    helperPath: typeof imported.helperPath === "string" && existsSync(imported.helperPath) ? imported.helperPath : undefined,
+    platformKey
+  };
+
+  return loadedNativeModule;
+}
+
+export function resolveToolPath(explicitToolPath: string | undefined, bundledToolPath: string | undefined) {
+  if (explicitToolPath) {
+    return explicitToolPath;
+  }
+
+  if (bundledToolPath) {
+    return bundledToolPath;
+  }
+
+  return undefined;
 }
 
 export async function isKnownKeypadConnected(vendorId: number, productId: number): Promise<boolean> {
-  const binding = await loadNativeBinding();
-  return Boolean(await binding.isKnownKeypadConnected(vendorId, productId));
+  const nativeModule = await loadNativeModule();
+  return Boolean(await nativeModule.binding.isKnownKeypadConnected(vendorId, productId));
 }
 
 export async function runPadUpload(payloadYaml: string): Promise<void> {
-  const binding = await loadNativeBinding();
-  await binding.runPadUpload(payloadYaml, process.env[TOOL_PATH_ENV]);
+  const nativeModule = await loadNativeModule();
+  const toolPath = resolveToolPath(process.env[TOOL_PATH_ENV], nativeModule.helperPath);
+
+  if (!toolPath) {
+    throw new Error(`Bundled helper binary missing for ${nativeModule.platformKey}. Reinstall @clawkeys/ck or set ${TOOL_PATH_ENV} to a compatible ch57x-keyboard-tool binary.`);
+  }
+
+  await nativeModule.binding.runPadUpload(payloadYaml, toolPath);
 }

@@ -18,7 +18,9 @@
   "files": [
     "index.js",
     "index.d.ts",
-    "*.node"
+    "*.node",
+    "ch57x-keyboard-tool*",
+    "LICENSE.ch57x-keyboard-tool"
   ],
   "engines": {
     "node": ">=20"

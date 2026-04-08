@@ -7,6 +7,7 @@ const require = createRequire(import.meta.url);
 
 const packageRoot = dirname(fileURLToPath(import.meta.url));
 const candidates = ["clawkeys.linux-x64-gnu.node", "clawkeys-linux-x64-gnu.node", "clawkeys.linux-x64-gnu.node.napi.node"];
+const helperFile = "ch57x-keyboard-tool";
 
 let bindingFile = candidates.find((name) => existsSync(join(packageRoot, name)));
 if (!bindingFile) {
@@ -19,8 +20,9 @@ if (!bindingFile) {
 }
 
 const binding = require(`./${bindingFile}`);
+const helperPath = existsSync(join(packageRoot, helperFile)) ? join(packageRoot, helperFile) : undefined;
 
 const isKnownKeypadConnected = binding.isKnownKeypadConnected || binding.is_known_keypad_connected;
 const runPadUpload = binding.runPadUpload || binding.run_pad_upload;
 
-export { isKnownKeypadConnected, runPadUpload };
+export { helperPath, isKnownKeypadConnected, runPadUpload };
