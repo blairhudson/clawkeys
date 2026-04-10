@@ -16,6 +16,12 @@
   Sponsored by <a href="https://skillcraft.gg">Skillcraft</a>.
 </p>
 
+<p align="center">
+  <a href="https://skillcraft.gg/docs/"><img src="https://skillcraft.gg/badges/enabled.svg" alt="Skillcraft Enabled" /></a>
+  <img src="https://img.shields.io/npm/l/%40clawkeys%2Fck" alt="NPM License" />
+  <img src="https://img.shields.io/npm/d18m/%40clawkeys%2Fck" alt="NPM Downloads" />
+</p>
+
 ## The Story
 
 I kept seeing AI-generated mockups of those little "approve once / approve always /
