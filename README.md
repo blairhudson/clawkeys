@@ -61,14 +61,19 @@ more like something that deserves real software behind it.
     <td align="center"><img src="https://raw.githubusercontent.com/blairhudson/clawkeys/main/photos/5-out-with-the-old.jpeg" alt="Removing the old keycaps" width="100%" /><br /><sub>5. Out with the factory caps.</sub></td>
     <td align="center"><img src="https://raw.githubusercontent.com/blairhudson/clawkeys/main/photos/6-in-with-the-new.jpeg" alt="New keycaps installed" width="100%" /><br /><sub>6. In with the new. Now it actually looks like the thing people kept posting.</sub></td>
   </tr>
+  <tr>
+    <td align="center"><img src="https://raw.githubusercontent.com/blairhudson/clawkeys/main/photos/7-printed-keycap-labels.jpeg" alt="Printed keycap labels" width="100%" /><br /><sub>7. The legends get printed. The joke now has typography.</sub></td>
+    <td align="center"><img src="https://raw.githubusercontent.com/blairhudson/clawkeys/main/photos/8-relegending-in-progress.jpeg" alt="Relegending in progress" width="100%" /><br /><sub>8. Relegending in progress: tiny inserts, steady hands, no turning back.</sub></td>
+    <td align="center"><img src="https://raw.githubusercontent.com/blairhudson/clawkeys/main/photos/9-finished-product-stay-safe-out-there.jpeg" alt="Finished keypad" width="100%" /><br /><sub>9. Finished product. The approve-once / approve-always / reject keypad made it onto the desk.</sub></td>
+  </tr>
 </table>
 
-Step 7 is still coming soon: printing the final keycap text inserts that sit under
-the relegendable covers and turn it into the finished approve-once / approve-always
-/ reject desk toy it was always trying to become.
+Printing the inserts and sliding them under the relegendable covers finished the
+hardware side exactly the way it was supposed to end: the meme became a real,
+usable little desk object.
 
-The last step was the software layer: getting the keypad mapped cleanly enough that
-it felt fun instead of fragile.
+The software layer was the last piece after that: getting the keypad mapped
+cleanly enough that it felt fun instead of fragile.
 
 ## What It Does
 
@@ -194,16 +199,16 @@ Notes:
 This repo is the software half of the project, but the hardware side is part of the
 story too.
 
-Still to add:
+Still worth documenting:
 
 - parts list with purchase links
 - the exact AliExpress keypad source
 - the relegendable keycap source
-- final label/legend notes
 
-If you want to build your own version once those links are in, the goal is simple:
-get a tiny CH57x 3-key + rotary pad, swap in relegendable caps, give it a better
-personality, and let `clawkeys` handle the last mile.
+The final label/legend step is shown above in the build log. If you want to build
+your own version once those links are in, the goal is simple: get a tiny CH57x
+3-key + rotary pad, swap in relegendable caps, give it a better personality, and
+let `clawkeys` handle the last mile.
 
 ## How It Behaves
 
