@@ -200,16 +200,31 @@ Notes:
 - `ck profile list` marks the active saved profile with `*`.
 - `ck status` shows `Profile: none` when built-in defaults are active.
 
-## Build One
+## Parts List
 
 This repo is the software half of the project, but the hardware side is part of the
 story too.
 
 Still worth documenting:
 
-- parts list with purchase links
-- the exact AliExpress keypad source
-- the relegendable keycap source
+- keypad: [CH57x 3-key + rotary keypad on AliExpress](https://www.aliexpress.com/item/1005008152936885.html)
+- keycaps: [GMK Relegendables from SwitchKeys](https://www.switchkeys.com.au/products/gmk-relegendables)
+
+Current hardware note: this keypad does not seem to work over USB-C to USB-C, which suggests the USB-C implementation on the device is incomplete. I have to use a USB-C cable with a small USB-A to USB-C adapter in the chain to get reliable connectivity.
+
+If you find a fix for that behavior or a better keypad source, open an issue on the repo.
+
+For the keycap legends, I printed them with `Inter Bold`, size `8`, `#FFFFFF` text, left-aligned on a `#000000` background:
+
+```text
+APPROVE
+ONCE
+
+APPROVE
+ALWAYS
+
+REJECT
+```
 
 The final label/legend step is shown above in the build log. If you want to build
 your own version once those links are in, the goal is simple: get a tiny CH57x
